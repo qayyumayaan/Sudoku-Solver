@@ -113,31 +113,40 @@ def counter(sudoku):
 def parityCheckFull(sudoku): # works on completed board
     row = len(sudoku)
     col = len(sudoku[0])
-    check = np.empty(9, dtype = np.int8)
-    numInCheckBlock = 0
+    # check = np.empty(9, dtype = np.int8)
 
     for rowNum in range(row):
+        errorRow = parityCheckRow(sudoku, rowNum)
         for colNum in range(col):
             errorCol = parityCheckCol(sudoku, colNum)
-        errorRow = parityCheckRow(sudoku, rowNum)
     index = (errorCol, errorRow)
     return index
                 
 def parityCheckCol(sudoku, rowNum):
     errorCol = -1
+    numInCheckBlock = 0
     check = np.empty(9, dtype = np.int8)
     for j in range(9):
         check[sudoku[rowNum][j] - 1] += 1
         numInCheckBlock += 1
+    
     if numInCheckBlock == 9:
         for k in range(9):
             if check[k] != 1:
                 errorCol = j
                 break
+    if numInCheckBlock == 8:
+        for k in range(9):
+            if check[k] == 0:
+                sudoku[rowNum][j] = k
+                errorCol = -2
+                break
+
     return errorCol
 
 def parityCheckRow(sudoku, colNum):
     errorRow = -1
+    numInCheckBlock = 0
     check = np.empty(9, dtype = np.int8)
     for i in range(9):
         check[sudoku[i][colNum] - 1] += 1
@@ -147,9 +156,14 @@ def parityCheckRow(sudoku, colNum):
             if check[k] != 1:
                 errorRow = i
                 break
+    if numInCheckBlock == 8:
+        for k in range(9):
+            if check[k] == 0:
+                sudoku[i][colNum] = k
+                errorCol = -2
+                break
     return errorRow
         
-    
            
 def mainRuntime(sudokuM):
     start_time = time.time()
@@ -174,6 +188,7 @@ def mainRuntime(sudokuM):
         replaceZeroesFull(sudokuTemp, numToComplete)
         totalAdded += blockingCheck(sudokuTemp, numToComplete, sudokuM, numInts)
         sudokuTemp = removeNegatives(sudokuTemp)
+        index = parityCheckFull(sudokuTemp)
         
         if (totalAdded + numOnBoardAtStart == 81): 
             numIterations = i
