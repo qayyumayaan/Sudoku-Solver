@@ -3,6 +3,99 @@ import os
 os.system('cls')
 import copy
 import time
+import parities as p
+import stack as s
+
+class Identifier:
+    def __init__(self, num, row, col):
+        self.num = num
+        self.row = row
+        self.col = col
+        
+    def getRow(self):
+        return self.row
+    def getCol(self):
+        return self.col
+    def getNum(self):
+        return self.num
+    
+    def setRow(self, r):
+        row = r
+    def setCol(self, c):
+        col = c
+    def setNum(self, n):
+        num = n
+        
+def makeAGuess(sudokuM, numInts):
+    import random
+    
+    # for row in range(0 + randBlock % 3, 3 + randBlock % 3):
+    #     for col in range(0 + randBlock % 3, 3 + randBlock % 3):
+                  
+    
+    # guess = random.randint(1,9)
+    # # for k in range(9):
+    # #     for i in range((x // 3) * 3, 2 + (x // 3)):
+    # #         for j in range((y // 3) * 3, 2 + (y // 3)):
+    # #             if sudokuM[j][i] != k:
+    # #                 guess = k
+    # chosenX, chosenY = 0, 0
+    
+    # for x in range(9):
+    #     for y in range(9):
+    #         if sudokuM[y][x] == 0:
+    #             for i in range(9):
+    #                 if sudokuM[i][x] == guess:
+    #                     break
+    #                 if sudokuM[y][i] == guess:
+    #                     break
+
+    #             for i in range((x // 3) * 3, 2 + (x // 3)):
+    #                 for j in range((y // 3) * 3, 2 + (y // 3)):
+    #                     if sudokuM[j][i] == guess:
+    #                         break
+    #             chosenY = y
+    #             chosenX = x
+    #         break
+    
+    # sudokuM[chosenY][chosenX] = guess
+    # item = Identifier(guess, y, x)
+    # return item
+    
+    
+    
+    # print(sudokuM)
+    # print(chosenX, chosenY)
+    # x = random.randint(0,8)
+    # y = random.randint(0,8)
+    badGuess = False
+    randBlock = random.randint(0,9)
+    numInts = initializeNumInts(sudokuM, numInts)
+    guess = findNextNum(numInts)
+    randX = random.randint(0,8)
+    randY = random.randint(0,8)
+    print("making guess: ")
+    while sudokuM[randY, randX] != 0:
+        randX = random.randint(0,8)
+        randY = random.randint(0,8)
+        
+        if sudokuM[randY][randX] == 0 & badGuess == False:
+            
+            for i in range(9):
+                if sudokuM[i][randX] == guess:
+                    badGuess == True
+                    break
+                if sudokuM[randY][i] == guess:
+                    badGuess == True
+                    break
+            
+            sudokuM[randY][randX] = guess
+            
+    item = Identifier(guess, randY, randX)
+    return item
+
+
+
 
 def replaceZeroesFull(arr, value):
     row = len(arr)
@@ -33,37 +126,6 @@ def removeNegatives(arr):
                 arr[i][j] = 0
     return arr    
 
-def blockingCheck(arr, value, mainArr, numInts):
-    interval = 3
-    row = len(arr)
-    col = len(arr[0])
-    coordI = 0
-    coordJ = 0
-    numUpdated = 0
-    for blockX in range(0,row,interval):
-        for blockY in range(0, col, interval):
-            numZeros = 0
-            
-            for i in range(blockX, blockX+interval):
-                for j in range(blockY, blockY+interval):
-                    # print(i,j)
-                    if arr[i][j] == value:
-                        numZeros = -100
-                        break
-                    if arr[i][j] == 0:
-                        numZeros += 1
-                        coordI = i
-                        coordJ = j
-                        
-                if arr[i][j] == value:
-                    numZeros = -100
-                    break            
-                        
-            if numZeros == 1:
-                updateAllArrays(arr, mainArr, coordI, coordJ, value)
-                numUpdated += 1
-    numInts[value - 1] = -1
-    return numUpdated
 
 def initializeNumInts(sudokuM, numInts):
     # X = sudokuM[0].size # 4
@@ -73,7 +135,7 @@ def initializeNumInts(sudokuM, numInts):
     for x in range(X):
         for y in range(Y):
             int = sudokuM[y, x]
-            if int != 0:
+            if int > 0:
                 numInts[ int - 1 ] += 1  
                 
     return numInts
@@ -109,72 +171,28 @@ def counter(sudoku):
             if sudoku[i][j] != 0:
                 num += 1
     return num
-           
-def parityCheckFull(sudoku): # works on completed board
-    row = len(sudoku)
-    col = len(sudoku[0])
-    # check = np.empty(9, dtype = np.int8)
-
-    for rowNum in range(row):
-        errorRow = parityCheckRow(sudoku, rowNum)
-        for colNum in range(col):
-            errorCol = parityCheckCol(sudoku, colNum)
-    index = (errorCol, errorRow)
-    return index
-                
-def parityCheckCol(sudoku, rowNum):
-    errorCol = -1
-    numInCheckBlock = 0
-    check = np.empty(9, dtype = np.int8)
-    for j in range(9):
-        check[sudoku[rowNum][j] - 1] += 1
-        numInCheckBlock += 1
-    
-    if numInCheckBlock == 9:
-        for k in range(9):
-            if check[k] != 1:
-                errorCol = j
-                break
-    if numInCheckBlock == 8:
-        for k in range(9):
-            if check[k] == 0:
-                sudoku[rowNum][j] = k
-                errorCol = -2
-                break
-
-    return errorCol
-
-def parityCheckRow(sudoku, colNum):
-    errorRow = -1
-    numInCheckBlock = 0
-    check = np.empty(9, dtype = np.int8)
-    for i in range(9):
-        check[sudoku[i][colNum] - 1] += 1
-        numInCheckBlock += 1
-    if numInCheckBlock == 9:
-        for k in range(9):
-            if check[k] != 1:
-                errorRow = i
-                break
-    if numInCheckBlock == 8:
-        for k in range(9):
-            if check[k] == 0:
-                sudoku[i][colNum] = k
-                errorCol = -2
-                break
-    return errorRow
-        
+                   
            
 def mainRuntime(sudokuM):
     start_time = time.time()
     sudokuUnModified = np.array(sudokuM, copy=True)
 
     numInts = np.empty(9, dtype=np.int8)
+    for i in range(9):
+        numInts[i] = 0
     numInts = initializeNumInts(sudokuM, numInts)
     # print(str(numInts))
 
     numOnBoardAtStart = counter(sudokuM)
     maxIterations, boardSolved, totalAdded, numIterations = 1500, False, 0, 0 
+    
+    # stack = 0
+    stack = s.Stack(5)
+    numNoWrites = 0
+    thresholdUntilGuessing = 10
+    thisSpotIsWrong = 0
+    
+    sudokuSavePoint = np.array(sudokuM, copy=True)
 
     for i in range(maxIterations):
         numToComplete = findNextNum(numInts)
@@ -186,19 +204,37 @@ def mainRuntime(sudokuM):
 
         sudokuTemp = np.array(sudokuM, copy=True)
         replaceZeroesFull(sudokuTemp, numToComplete)
-        totalAdded += blockingCheck(sudokuTemp, numToComplete, sudokuM, numInts)
+        
+        numAddedThisIteration = p.blockingCheck(sudokuTemp, numToComplete, sudokuM, numInts)
+        
+        totalAdded += numAddedThisIteration
+        
+        if (numNoWrites > thresholdUntilGuessing):
+            sudokuSavePoint = np.array(sudokuM, copy=True)
+            stack.push(makeAGuess(sudokuM, numInts))
+            numNoWrites = 0  
+        elif numAddedThisIteration == 0:
+            numNoWrites += 1
+            
         sudokuTemp = removeNegatives(sudokuTemp)
-        index = parityCheckFull(sudokuTemp)
         
         if (totalAdded + numOnBoardAtStart == 81): 
             numIterations = i
             boardSolved = True
             break
+        
+        if (p.parityCheckFull(sudokuM)):
+            sudokuM = sudokuSavePoint
+            if not stack.isEmpty():
+                thisSpotIsWrong = stack.pop()
+        numIterations += 1
 
     if (boardSolved == False): 
-        print("Was unable to solve. Gave up after " + str(maxIterations) + " iterations. ")
+        print("Was unable to solve. Gave up after " + str(numIterations) + " iterations. ")
     else:
         print("Success! Solved after " + str(numIterations) + " iterations. ")
+
+    p.parityCheckFull(sudokuM)
 
     print(sudokuM)
     print()
