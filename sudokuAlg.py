@@ -5,28 +5,7 @@ import copy
 import time
 import parities as p
 import stack as s
-
-class Identifier:
-    def __init__(self, num, row, col):
-        self.num = num
-        self.row = row
-        self.col = col
-        
-    def getRow(self):
-        return self.row
-    def getCol(self):
-        return self.col
-    def getNum(self):
-        return self.num
     
-    def setRow(self, r):
-        row = r
-    def setCol(self, c):
-        col = c
-    def setNum(self, n):
-        num = n
-        
-
 def replaceZeroesFull(arr, value):
     row = len(arr)
     col = len(arr[0])
@@ -133,12 +112,8 @@ def mainRuntime(sudokuM):
             sudokuM = sudokuSavePoint
         numIterations += 1
 
-    if (boardSolved == False): 
-        print("\nWas unable to solve. Gave up after " + str(numIterations) + " iterations. ")
-    else:
-        print("\nSuccess! Solved after " + str(numIterations) + " iterations. ")
-
-    p.parityCheckFull(sudokuM)
+    if (not boardSolved): print("\nWas unable to solve. Gave up after " + str(numIterations) + " iterations. ")
+    else: print("\nSuccess! Solved after " + str(numIterations) + " iterations. ")
 
     print(sudokuM)
     print("\nNumbers Added:")
