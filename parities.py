@@ -11,8 +11,10 @@ def parityCheckFull(sudoku): # works on completed board
     for colNum in range(rows):
         errorRow = parityCheckRow(sudoku, colNum)
 
-    index = (errorCol, errorRow)
-    return index
+    if errorCol == -1 or errorRow == -1:
+        return True
+    else:
+        return False
                 
 def parityCheckCol(sudoku, rowNum):
     errorInCol = -1

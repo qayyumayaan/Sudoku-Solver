@@ -23,6 +23,54 @@ def is_valid_number(grid, row, col, num):
             return False
     return True
 
+def nakedSingleInSubArray(arr):
+    num2update = -1
+    col2update = -1
+    numInAisle = 0
+    parity = np.empty(9)
+    for i in range(9):
+        parity[i] = 0
+        if (arr[i] != 0):
+            parity[arr[i]] += 1
+            numInAisle += 1
+        else: 
+            col2update = i
+        
+    if numInAisle == 8:
+        for i in range(9):
+            if parity[i] == 0:
+                num2update = i
+        arr[col2update] = num2update
+        return True
+    else:
+        return False
+    # grid[row][col2update] = num2update
+        
+def nakedSingle(grid):
+
+    for i in range(9):
+        subArray = np.array(9)
+        for j in range(9):
+            subArray[j] = grid[i][j]
+        if not nakedSingleInSubArray(subArray):
+            for j in range(9):
+                grid[i][j] = subArray[j]
+                
+    for j in range(9):
+        subArray = np.array(9)
+        for i in range(9):
+            subArray[i] = grid[i][j]
+        if not nakedSingleInSubArray(subArray):
+            for i in range(9):
+                grid[i][j] = subArray[i]
+    
+            
+        
+        
+
+                
+
+
 def solve_sudoku(grid):
     """
     This function solves the Sudoku puzzle using a recursive backtracking algorithm.
@@ -44,48 +92,71 @@ def solve_sudoku(grid):
 
     return False
 
-# Example usage:
-# grid = [
-#     [3, 0, 6, 5, 0, 8, 4, 0, 0],
-#     [5, 2, 0, 0, 0, 0, 0, 0, 0],
-#     [0, 8, 7, 0, 0, 0, 0, 3, 1],
-#     [0, 0, 3, 0, 0, 0, 0, 2, 0],
-#     [9, 0, 0, 8, 0, 0, 0, 0, 5],
-#     [0, 5, 0, 0, 0, 0, 6, 0, 0],
-#     [1, 3, 0, 0, 0, 0, 2, 5, 0],
-#     [0, 0, 0, 0, 0, 0, 0, 7, 4],
-#     [0, 0, 5, 2, 0, 6, 3, 0, 0]
-# ]
 
-# grid = np.array([
-#     [0, 0, 5,  3, 6, 0,  4, 0, 0],
-#     [9, 6, 2,  0, 0, 4,  0, 7, 0],
-#     [3, 0, 4,  0, 2, 9,  0, 6, 0],
+def solve_sudoku_iteratively(grid):
+    stack = []
+    stack.append(grid)
     
-#     [8, 2, 0,  9, 4, 0,  0, 1, 3],
-#     [0, 4, 9,  0, 3, 0,  0, 5, 7],
-#     [0, 0, 0,  2, 0, 0,  9, 8, 0],
-
-#     [4, 0, 6,  0, 0, 1,  0, 0, 2],
-#     [0, 0, 0,  6, 9, 3,  0, 0, 5],
-#     [0, 0, 3,  0, 8, 0,  0, 0, 0]])
-
-
-grid = np.array([ # 17 clue
-    [0, 0, 0,  8, 0, 1,  0, 0, 0],
-    [0, 0, 0,  0, 0, 0,  0, 4, 3],
-    [5, 0, 0,  0, 0, 0,  0, 0, 0],
+    while len(stack) > 0:
+        curr_grid = stack.pop()
+        empty_cell = find_empty_location(curr_grid)
+        if empty_cell is None:
+            return curr_grid
+        
+        row, col = empty_cell
+        for num in range(1, 10):
+            if is_valid_number(curr_grid, row, col, num):
+                new_grid = [row[:] for row in curr_grid]
+                new_grid[row][col] = num
+                stack.append(new_grid)
     
-    [0, 0, 0,  9, 7, 0,  8, 0, 0],
-    [0, 0, 0,  0, 0, 0,  1, 0, 0],
-    [0, 2, 0,  0, 3, 0,  0, 0, 0],
+    return None
 
-    [6, 0, 0,  0, 0, 0,  0, 7, 5],
-    [0, 0, 3,  4, 0, 0,  0, 0, 0],
-    [0, 0, 0,  2, 0, 0,  6, 0, 0]])
 
-if solve_sudoku(grid):
+grid = np.array([
+[	0	,	0	,	5	,	3	,	6	,	7	,	4	,	2	,	9	],
+[	0	,	6	,	2	,	5	,	1	,	4	,	3	,	7	,	8	],
+[	0	,	7	,	4	,	8	,	2	,	9	,	5	,	6	,	1	],
+[	0	,	2	,	7	,	9	,	4	,	5	,	6	,	1	,	3	],
+[	0	,	4	,	9	,	1	,	3	,	8	,	2	,	5	,	7	],
+[	0	,	3	,	9	,	2	,	7	,	6	,	9	,	8	,	4	],
+[	0	,	9	,	6	,	7	,	5	,	1	,	8	,	3	,	2	],
+[	0	,	1	,	8	,	6	,	9	,	3	,	7	,	4	,	5	],
+[	0	,	5	,	3	,	4	,	8	,	2	,	1	,	9	,	6	], ])
+
+
+
+# if solve_sudoku_iteratively(grid):
+#     for row in grid:
+#         print(row)
+# else:
+#     print("No solution exists")
+    
+    
+# print()
+
+# if solve_sudoku(grid):
+#     for row in grid:
+#         print(row)
+# else:
+#     print("No solution exists")
+    
+    
+grid = np.array([
+[	0	,	0	,	5	,	3	,	6	,	7	,	4	,	2	,	9	],
+[	0	,	6	,	2	,	5	,	1	,	4	,	3	,	7	,	8	],
+[	0	,	7	,	4	,	8	,	2	,	9	,	5	,	6	,	1	],
+[	0	,	2	,	7	,	9	,	4	,	5	,	6	,	1	,	3	],
+[	0	,	4	,	9	,	1	,	3	,	8	,	2	,	5	,	7	],
+[	0	,	3	,	9	,	2	,	7	,	6	,	9	,	8	,	4	],
+[	0	,	9	,	6	,	7	,	5	,	1	,	8	,	3	,	2	],
+[	0	,	1	,	8	,	6	,	9	,	3	,	7	,	4	,	5	],
+[	0	,	5	,	3	,	4	,	8	,	2	,	1	,	9	,	6	], ])
+    
+print()
+    
+if nakedSingle(grid):
     for row in grid:
         print(row)
-else:
-    print("No solution exists")
+    
+    
