@@ -27,10 +27,3 @@ def solve(grid):
                 return True
             grid[row][col] = 0
     return False
-
-
-# if solve(grid):
-#     for row in grid:
-#         print(row)
-# else:
-#     print("No solution exists.")
