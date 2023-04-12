@@ -6,54 +6,57 @@ import time
 import parities as p
 import stack as s
     
-def replaceZeroesFull(arr, value):
-    row = len(arr)
-    col = len(arr[0])
-    for i in range(row):
-        for j in range(col):
-            replaceZeros(arr, value, i, j)
-    return arr
-
-def replaceZeros(arr, value, i, j):
-    row = len(arr)
-    col = len(arr[0])
-    if arr[i][j] == value:
-            for k in range(col):
-                if arr[i][k] == 0:
-                    arr[i][k] = -1
-            for k in range(row):
-                if arr[k][j] == 0:
-                    arr[k][j] = -1
-    return arr  
-
-def removeNegatives(arr):
-    row = len(arr)
-    col = len(arr[0])
-    for i in range(row):
-        for j in range(col):
-            if arr[i][j] == -1:
-                arr[i][j] = 0
-    return arr    
 
 
-def initializeNumInts(sudokuM, numInts):
-    # X = sudokuM[0].size # 4
-    # Y = int(sudokuM.size / sudokuM[0].size) # 3
-    X, Y = 9, 9
-    # can implement using binary heap (we want max value first)
-    for x in range(X):
-        for y in range(Y):
-            int = sudokuM[y, x]
-            if int > 0:
-                numInts[ int - 1 ] += 1  
-                
-    return numInts
 
 def sudokuGuesser(grid, numGuesses):
+    # print()
+    # print(grid)
+    stack = []
+    gridBase = np.copy(grid)
+    stack.append(grid)
+    updated = False
+    noValidSpotFound = True
+    
+    while len(stack) >= 1 and numGuesses >= 0:
+        curr_grid = stack.pop()
+        empty_cell = find_empty_location(curr_grid)
+        if empty_cell is None:
+            return curr_grid
+        
+        row, col = empty_cell
+        
+        seen_numbers = set()
+        for token in range(1, 10):
+            num = generate_new_number(seen_numbers)
+            if is_valid_number(curr_grid, row, col, num):
+                # new_grid = [row[:] for row in curr_grid]
+                new_grid = np.copy(curr_grid)
+                # print(new_grid)
+                new_grid[row][col] = num
+                stack.append(new_grid)
+                updated = True
+                noValidSpotFound = False
+                break
+        if updated == False:
+            stack.append(curr_grid)
+        elif updated == True:
+            updated = False
+        if noValidSpotFound:
+            grid = gridBase
+
+            
+        numGuesses -= 1
+    grid = stack.pop()
+    # print(grid - gridBase)
+    return grid
+
+
+def solve_sudoku_iteratively(grid):
     stack = []
     stack.append(grid)
     
-    while len(stack) > 0 and numGuesses <= 0:
+    while len(stack) > 0:
         curr_grid = stack.pop()
         empty_cell = find_empty_location(curr_grid)
         if empty_cell is None:
@@ -64,11 +67,18 @@ def sudokuGuesser(grid, numGuesses):
             if is_valid_number(curr_grid, row, col, num):
                 new_grid = [row[:] for row in curr_grid]
                 new_grid[row][col] = num
-                stack.append(new_grid) 
-        numGuesses -= 1
-    grid = stack.pop()
-    print(grid)
-    return grid
+                stack.append(new_grid)
+    
+    return None
+
+
+def generate_new_number(seen_numbers):
+    import random
+    while True:
+        number = random.randint(1, 9)
+        if number not in seen_numbers:
+            seen_numbers.add(number)
+            return number
                 
 def find_empty_location(grid):
     """
@@ -112,17 +122,7 @@ def findNextNum(numInts):
     # print(numInts) # gives # of integers present: [2 5 6 6 3 5 2 3 6 0]
     # print("frequency: " + str(freq) + " num: " + str(numToComplete))
 
-def updateAllArrays(arr, mainArr, coordI, coordJ, value):
-    arr[coordI][coordJ], mainArr[coordI][coordJ] = value, value
-    replaceZeros(arr, value, coordI, coordJ)
 
-def counter(sudoku):
-    num = 0
-    for i in range(9):
-        for j in range(9):
-            if sudoku[i][j] != 0:
-                num += 1
-    return num
                    
            
 def mainRuntime(sudokuM):
@@ -132,50 +132,50 @@ def mainRuntime(sudokuM):
     numInts = np.empty(9, dtype=np.int8)
     for i in range(9): numInts[i] = 0
 
-    numInts, numOnBoardAtStart = initializeNumInts(sudokuM, numInts), counter(sudokuM)
+    # numInts, numOnBoardAtStart = initializeNumInts(sudokuM, numInts), counter(sudokuM)
     maxIterations, boardSolved, totalAdded, numIterations = 15000, False, 0, 0 
 
-    # stack = []
-    # stack.append(sudokuM)
+    stack = []
+    stack.append(sudokuM)
     
     numNoWrites = 0
     thresholdForGuessing = 10
     failedParity = 0
 
+    import myGoodAlg
+
+    numOnBoardAtStart = myGoodAlg.counter(sudokuM)
+    print(numOnBoardAtStart)
+    
     for i in range(maxIterations):
-        numToComplete = findNextNum(numInts)
-        if numToComplete == -1:
-            numInts, numToComplete = initializeNumInts(sudokuM, numInts), findNextNum(numInts)
-
-        sudokuTemp = np.array(sudokuM, copy=True)
-        replaceZeroesFull(sudokuTemp, numToComplete)
         
-        numAddedThisIteration = p.blockingCheck(sudokuTemp, numToComplete, sudokuM, numInts)
-        
+        numAddedThisIteration = myGoodAlg.myAlg(sudokuM)
         totalAdded += numAddedThisIteration
-        sudokuTemp = removeNegatives(sudokuTemp)
+        print(totalAdded)
 
-        if (numNoWrites > thresholdForGuessing):
-            sudokuSavePoint = sudokuM
-            bruh = sudokuGuesser(sudokuM, 81)
-            print(bruh - sudokuUnModified)
-            numNoWrites = 0
-            # print(sudokuM)
-        elif numAddedThisIteration == 0:
-            numNoWrites += 1
+        # if (numNoWrites > thresholdForGuessing):
+        #     sudokuSavePoint = sudokuM
+        #     # sudokuM = sudokuGuesser(sudokuM, 81)
+
+        #     # print(bruh - sudokuUnModified)
+        #     numNoWrites = 0
+        #     # print(sudokuM)
+        # elif numAddedThisIteration == 0:
+        #     numNoWrites += 1
         
         if (totalAdded + numOnBoardAtStart == 81): 
             numIterations, boardSolved = i, True
             break
         
-        if (p.parityCheckFull(sudokuM) == False):
-            sudokuM = sudokuSavePoint
-            failedParity += 1
-        numIterations += 1
+        # if (p.parityCheckFull(sudokuM) == False):
+        #     sudokuM = sudokuSavePoint
+        #     failedParity += 1
+        #     print("failed")
+        # numIterations += 1
         
-        if (numIterations % (maxIterations / 3) == 0): 
-            print("iterations: " + str(numIterations))
-            print("failed parity: " + str(failedParity))
+        # if (numIterations % (maxIterations / 3) == 0): 
+        #     print("iterations: " + str(numIterations))
+        #     print("failed parity: " + str(failedParity))
 
     if (not boardSolved): print("\nWas unable to solve. Gave up after " + str(numIterations) + " iterations. ")
     else: print("\nSuccess! Solved after " + str(numIterations) + " iterations. ")

@@ -94,7 +94,8 @@ def blockingCheck(arr, value, mainArr, numInts):
                     break            
                         
             if numZeros == 1:
-                sud.updateAllArrays(arr, mainArr, coordI, coordJ, value)
+                import myGoodAlg
+                myGoodAlg.updateAllArrays(arr, mainArr, coordI, coordJ, value)
                 numUpdated += 1
     numInts[value - 1] = -1
     return numUpdated
