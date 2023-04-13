@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sudoku Solver</title>
+  </head>
+  <body>
+    <p>Solve any Sudoku puzzle for free using this online tool. Type in the values and it will solve your board for you.</p>
+    <label for="name">Enter your name:</label>
+    <input type="text" id="name">
+    <button onclick="greet()">Submit</button>
+    <p id="greeting"></p>
+
+    <script>
+      function greet() {
+        const name = document.getElementById("name").value;
+        const greeting = document.getElementById("greeting");
+        greeting.textContent = `Hello, ${name}! Welcome to my website.`;
+      }
+    </script>
+
+    <script src="src/sudoku.js"></script>
+  </body>
+</html>
