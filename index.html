@@ -1,23 +1,235 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Sudoku Solver</title>
+    <title>Sudoku Board Input</title>
+    <style type="text/css">
+        body {
+            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+            margin: 0 1em 1em;
+        }
+        p label, .color-picker label {
+            width: 10em;
+            display: inline-block;
+        }
+        p.desc, #download {
+            font-size: smaller;
+        }
+        p.desc {
+            border-top: 1px solid #afafaf;
+            padding-top: 1em;
+
+        }
+        .hide {
+            display: none;
+        }
+        .controls {
+            padding-bottom: 1em;
+        }
+        canvas {
+            /* if canvas overflows body */
+            margin-right: 1em;
+        }
+        .color-picker {
+            margin: 16px 0;
+            display:flex;
+            position: relative;
+        }
+        .color-sample {
+            width: 1em;
+            border: 1px solid #000;
+            margin: 0 .5em;
+        }
+        .color-picker {
+            margin-left: 5px;
+        }
+        .palette {
+            margin: 1.5em 0 0 10em;
+            width: 270px;
+            background: #efefef;
+            border: 1px solid #bcbcbc;
+            border-radius: 1px;
+            display: none;
+            padding: 1px;
+            position: absolute;
+            z-index: 1000;
+        }
+        .palette div {
+            width: 18px;
+            height: 18px;
+            margin: 3px;
+            cursor:pointer;
+            display: inline-block;
+        }
+        .palette div:focus {
+            outline-width: 2px;
+            outline-style: dashed;
+        }
+        .screen-reader-text {
+            border: 0;
+            clip: rect(1px, 1px, 1px, 1px);
+            -webkit-clip-path: inset(50%);
+            clip-path: inset(50%);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+            word-wrap: normal !important; /* many screen reader and browser combinations announce broken words as they would appear visually */
+        }
+
+        noscript p {
+            border: 1px solid red;
+            padding: 1em;
+        }
+
+        #generate {
+            border-top: 1px solid #afafaf;
+            padding-top: 1em;
+        }
+
+        button {
+            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+            padding:5px 1em;
+            margin-right: .5em;
+            font-size: .9em;
+            background:#3377ff;
+            color: #fff;
+            border:0 none;
+            cursor:pointer;
+            -webkit-border-radius: 3px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background:#0055ff;
+        }
+    </style>
+    <style>
+        #resultTable {
+          border-collapse: collapse;
+          font-size: 1rem;
+          margin: 0;
+          text-align: left;
+        }
+      
+        #resultTable td {
+          padding: 1em;
+          border: 1px solid #ccc;
+          text-align: center;
+        }
+      </style>
   </head>
   <body>
+    <h1>Sudoku Solver</h1>
     <p>Solve any Sudoku puzzle for free using this online tool. Type in the values and it will solve your board for you.</p>
-    <label for="name">Enter your name:</label>
-    <input type="text" id="name">
-    <button onclick="greet()">Submit</button>
-    <p id="greeting"></p>
-
-    <script>
-      function greet() {
-        const name = document.getElementById("name").value;
-        const greeting = document.getElementById("greeting");
-        greeting.textContent = `Hello, ${name}! Welcome to my website.`;
-      }
-    </script>
-
+    <table>
+      <tbody>
+        <tr>
+          <td><input type="text" size="2.5"></td>
+          <td><input type="text" size="2.5"></td>
+          <td><input type="text" size="2.5"></td>
+          <td><input type="text" size="2.5"></td>
+          <td><input type="text" size="2.5"></td>
+          <td><input type="text" size="2.5"></td>
+          <td><input type="text" size="2.5"></td>
+          <td><input type="text" size="2.5"></td>
+          <td><input type="text" size="2.5"></td>
+        </tr>
+        <tr>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+          </tr>
+          <tr>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+          </tr>
+          <tr>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+          </tr>
+          <tr>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+          </tr>
+          <tr>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+          </tr>
+          <tr>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+          </tr>
+          <tr>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+          </tr>
+          <tr>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+            <td><input type="text" size="2.5"></td>
+          </tr>
+      </tbody>
+    </table>
+    <button onclick="solveSudoku()">Solve!</button>
+    <hr>
+    <h2 id="resultHeader" style="display: none;">Result</h2>
+    <table id="resultTable">
+    </table>
     <script src="src/sudoku.js"></script>
   </body>
 </html>
