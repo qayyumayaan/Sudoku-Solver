@@ -72,7 +72,6 @@ function solveSudoku() {
   }
 
   solve(inputValues);
-  print(inputValues);
   document.getElementById("resultHeader").style.display = "block";
 }
 
