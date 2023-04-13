@@ -72,10 +72,11 @@ function solveSudoku() {
   }
 
   solve(inputValues);
+  printOut(inputValues);
   document.getElementById("resultHeader").style.display = "block";
 }
 
-function print(inputValues) {
+function printOut(inputValues) {
   const resultTable = document.getElementById("resultTable");
   resultTable.innerHTML = "";
   for (let i = 0; i < inputValues.length; i++) {
